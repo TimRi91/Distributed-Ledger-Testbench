@@ -24,13 +24,15 @@ from neo.Prompt.Commands.LoadSmartContract import LoadContract, GatherContractDe
 from neo.Prompt.Commands.Invoke import InvokeContract, TestInvokeContract, test_invoke
 from twisted.internet import reactor, task
 
+#-----------------------------------------------------
 #Testsetrate (#requests/sec)
 testset = 6
 
 # Setup the smart contract instance
 smart_contract_addr = 'a19b97b9fde577812722573eab5c0f1c635a588c'                        
-wallet_path  = 'dltwallet.db3'
-wallet_pass = 'password'
+wallet_path  = 'wallet.db3'
+wallet_pass = 'wallepw'
+#-----------------------------------------------------
 
 class neoBench:
     def __init__(self, walletpath, walletpw):
@@ -102,7 +104,7 @@ class neoBench:
             _tx, height = Blockchain.Default().GetTransaction(tx.Hash.ToString())
             if height > -1:
                 return True
-            sleep(1)
+            #sleep(1)
 
 
 def custom_background_code():
@@ -142,6 +144,8 @@ def custom_background_code():
                  file.write(str(writeLatency) + ' (write)sec \n')
                  file.write(str(readLatency) + ' (read)sec \n')
             file.close()
+        else:
+            break
     print('Measurement finished')
     
 def main():

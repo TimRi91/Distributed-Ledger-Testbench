@@ -26,14 +26,15 @@ from neo.Prompt.Commands.LoadSmartContract import LoadContract, GatherContractDe
 from neo.Prompt.Commands.Invoke import InvokeContract, TestInvokeContract, test_invoke
 from twisted.internet import reactor, task
 
-
+#-----------------------------------------------------
 #Testsetrate (#requests/sec)
 n = 6
 
 # Setup the smart contract instance
-smart_contract_addr = ''                        
-wallet_path  = 'dltwallet.db3'
-wallet_pass = 'password'
+smart_contract_addr = 'c30a188c203011720b4880d20cfe6d1bce3ba7f6'                        
+wallet_path  = 'wallet.db3'
+wallet_pass = 'wallepw'
+#-----------------------------------------------------
 
 class neoBench ():
     def __init__(self, walletpath, walletpw):

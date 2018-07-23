@@ -27,12 +27,16 @@ from twisted.internet import reactor, task
 
 #Testsetrate (#requests/sec) 
 n = 6
-maxRate = False
+
+if n > 50:
+    maxRate = True
+else:
+    maxRate = False
 
 # Setup the smart contract instance
-smart_contract_addr = ''                        
-wallet_path  = 'dltwallet.db3'
-wallet_pass = 'password'
+smart_contract_addr = 'c30a188c203011720b4880d20cfe6d1bce3ba7f6'                        
+wallet_path  = 'wallet.db3'
+wallet_pass = 'wallepw'
 
 class neoBench ():
     def __init__(self, walletpath, walletpw):
@@ -71,7 +75,10 @@ class neoBench ():
         """  Invoke a method of the Smart Contract """
         
         if self.Wallet.IsSynced is False:
-            raise Exception("Wallet is not synced.")
+            #raise Exception("Wallet is not synced.")
+            while self.Wallet.IsSynced is False:
+                self._walletdb_loop = task.LoopingCall(self.Wallet.ProcessBlocks)
+                self._walletdb_loop.start(1)
 
         tx, fee, results, num_ops = TestInvokeContract(self.Wallet, args)
         if not tx: 
@@ -84,7 +91,9 @@ class neoBench ():
 
         if sent_tx:
             logger.info("InvokeContract success, transaction underway: %s" %sent_tx.Hash.ToString())
-
+        else:
+            raise Exception("InvokeContract failed")
+            
 def custom_background_code():
     """
     This function is run in a daemonized thread, which means it can be instantly killed at any
@@ -116,53 +125,36 @@ def custom_background_code():
 
     iCounter = 0
     while True:
-        if time.time()-tBegin <  300:
+        if time.time()-tBegin <  330:
             if iCounter % 2 == 0:
-                tStart = time.time()
                 #write - set-function: string Key, string Value
                 nb.invokeMethod([smart_contract_addr, 2, ["A","B",10,iNonce]]) 
                 iNonce = iNonce + 1
                 iRate = iRate + 1
 
-                #Delay for executing code
-                tDelay = time.time()-tStart
-                #Sleep for 1/n second minus Delay
-                if(1/n)-tDelay > 0:
-                    time.sleep((1/n)-tDelay)
+                #Sleep for 1/n second
+                time.sleep(1/n)
                 
-                tStart = time.time()
                 #read - get-function: string Key
-                args = [smart_contract_addr, 1, ["B",iNonce]]
-                nb.invokeMethod(args)
+                nb.invokeMethod([smart_contract_addr, 1, ["B",iNonce]])
                 iNonce = iNonce + 1
                 iRate = iRate + 1
-            else:
-                tStart = time.time()
 
+            else:
                 #write - set-function: string Key, string Value
                 nb.invokeMethod([smart_contract_addr, 2, ["B","A",10,iNonce]]) 
                 iNonce = iNonce + 1
                 iRate = iRate + 1
 
-                #Delay for executing code
-                tDelay = time.time()-tStart
-                #Sleep for 1/n second minus Delay
-                if(1/n)-tDelay > 0:
-                    time.sleep((1/n)-tDelay)
-                
-                tStart = time.time()
-                
+                #Sleep for 1/n second
+                time.sleep(1/n)
+                               
                 #read - get-function: string Key
                 nb.invokeMethod([smart_contract_addr, 1, ["A",iNonce]])
                 iNonce = iNonce + 1
                 iRate = iRate + 1
                 
-                #Delay for executing code
-                tDelay = time.time()-tStart
-                #Sleep for 1/n second minus Delay
-                if(1/n)-tDelay > 0:
-                    time.sleep((1/n)-tDelay)
-
+            tDelay = time.time()
             #Check for new Periode of 1 second
             if time.time()-tPeriode > 1.0:
                 print('Requestrate: ', iRate)
@@ -176,8 +168,20 @@ def custom_background_code():
 
                 tPeriode = time.time()
                 iRate = 0
-                
+            tDelay = time.time() - tDelay
+
+            #Sleep for 1/n second minus delay
+            #Periode Check-Delay equals or is bigger than 1/n, just continue 
+            if (1/n)-tDelay > 0:
+                time.sleep((1/n)-tDelay)
+
             iCounter = iCounter + 1
+
+        else:
+            break
+
+    print("Workload done")       
+
 def main():
     # Use PrivateNet
     settings.setup_privnet()
