@@ -14,6 +14,8 @@ n = 6
 node = 'localnode'
 #Coinbase-Account
 coinbasePrivateKey='private-key'
+#Contract-Address
+contractAddress= 'contract-Address'
 #---------------------------------------------
 
 #path to the folder of the abi-files
@@ -22,7 +24,7 @@ dir_path = ('contracts')
 with open(str(os.path.join(dir_path,'kvstore_abi.json')),'r') as abi_definition:
     abi = json.load(abi_definition)
 
-contract_adress = web3.toChecksumAddress('contract-address')
+contract_adress = web3.toChecksumAddress(contractAddress)
 # Create the contract instance with the deployed address
 contract = web3.eth.contract(address = contract_adress, abi = abi)
 
