@@ -1,24 +1,19 @@
-"""
-Testbench for measuring metrics for the Ethereum-Blockchain
-
-
-"""
 import os
 import time
 from web3 import Web3
 
 #----------------Set Variables----------------
 #Testsetrate (#requests/sec)
-n = 100
+n = 6
 #Node
-node = 'node3'
+node = 'localnode'
 #---------------------------------------------
 
 
 #create .txt-file
 filename = 'KVstore_Throughput_Testset'+str(n)+'_'+str(time.strftime("%d-%m-%Y_%H-%M-%S"))+'.txt'
 pathname = os.path.join('results', filename)
-web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8547", request_kwargs={'timeout': 60}))
+web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:30311", request_kwargs={'timeout': 60}))
     
 tBeginn=time.time()
 while True:
