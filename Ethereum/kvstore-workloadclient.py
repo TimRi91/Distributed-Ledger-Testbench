@@ -15,7 +15,7 @@ node = 'localnode'
 #Coinbase-Account
 coinbasePrivateKey='private-key'
 #Contract-Address
-contractAddress= 'contract-Address'
+contractAddress='contract-Address'
 #---------------------------------------------
 
 #path to the folder of the abi-files
