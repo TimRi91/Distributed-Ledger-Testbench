@@ -10,12 +10,14 @@ n = 6
 node = 'localnode'
 #Coinbase-Account
 coinbasePrivateKey='private-key'
+#Contract-Address
+contractAddress= 'contract-Address'
 #---------------------------------------------
 
 #connect to node
 web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:30311", request_kwargs={'timeout': 60}))
 #Contract
-contract_adress = web3.toChecksumAddress('contract-address')
+contract_adress = web3.toChecksumAddress(contractAddress)
 #result-file
 filename = 'KVstore_Latency_Testsetrate'+str(n)+'_'+str(time.strftime("%d-%m-%Y_%H-%M-%S"))+'.txt'
 pathname = os.path.join('results', filename)    
